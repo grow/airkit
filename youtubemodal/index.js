@@ -1,38 +1,79 @@
-var loaded = false;
+/**
+ * @fileoverview Creates a YouTube player in a modal.
+ */
+
+var classes = require('../utils/classes');
+var dom = require('../utils/dom');
+var events = require('../utils/events');
+var objects = require('../utils/objects');
+var useragent = require('../utils/useragent');
+
+
+var initted = false;
 var player = null;
-
-
-function YouTubeModal() {
-  if (loaded) {
-    return;
+var defaultConfig = {
+  useHandlerOnMobile: true,
+  className: 'ak-youtubemodal',
+  playerVars: {
+    'autohide': 1,
+    'autoplay': 1,
+    'fs': 1,
+    'modestbranding': 1,
+    'rel': 0,
+    'showinfo': 0,
+    'iv_load_policy': 3
   }
-  var el = createDom('div', 'ak-youtubemodal');
-  var closeEl = createDom('div', 'ak-youtubemodal-x');
-  el.appendChild(closeEl);
-  el.appendChild(createDom('div', 'ak-youtubemodal-player'));
-  el.appendChild(createDom('div', 'ak-youtubemodal-mask'));
-  document.body.appendChild(el);
+};
 
-  closeEl.addEventListener('click', function() {
-    self.setVisible(false);
-  });
 
-  var self = this;
-  listen(function(target) {
-    var videoId = target.getAttribute('data-ak-youtubemodal-video-id');
+/**
+ * Plays a YouTube video in a modal dialog
+ * @constructor
+ */
+function YouTubeModal(config) {
+  this.config = config;
+  this.initDom_();
+
+  var func = function(targetEl) {
+    var data = 'data-' + this.config.className + '-video-id';
+    var videoId = targetEl.getAttribute(data);
     if (videoId) {
-      self.play(videoId);
+      this.play(videoId);
     }
-  });
+  }.bind(this);
 
+  // Loads YouTube iframe API.
+  events.addDelegatedListener(document, 'click', func);
   var tag = document.createElement('script');
   tag.setAttribute('src', 'https://www.youtube.com/iframe_api');
   document.body.appendChild(tag);
-  loaded = true;
 }
 
 
+/**
+ * Creates the DOM for the YouTube modal.
+ * @private
+ */
+YouTubeModal.prototype.initDom_ = function() {
+  var createDom = dom.createDom;
+  var el = createDom('div', this.config.className);
+  var closeEl = createDom('div', this.config.className + '-x');
+  el.appendChild(closeEl);
+  el.appendChild(createDom('div', this.config.className + '-player'));
+  el.appendChild(createDom('div', this.config.className + '-mask'));
+  document.body.appendChild(el);
+  closeEl.addEventListener('click', function() {
+    this.setVisible(false);
+  }.bind(this));
+};
+
+
+/**
+ * Sets the modal's visibility.
+ * @param {Boolean} enabled Whether the modal should be visible.
+ */
 YouTubeModal.prototype.setVisible = function(enabled) {
+  // Plays or pauses depending on visibility.
   if (player) {
     if (enabled) {
       player.playVideo();
@@ -54,85 +95,56 @@ YouTubeModal.prototype.setVisible = function(enabled) {
     document.body.removeEventListener('keydown', _keyToggle);
   }
 
-  var lightboxEl = document.querySelector('.ak-youtubemodal');
+  var lightboxEl = document.querySelector('.' + this.config.className);
   window.setTimeout(function() {
-    enableClass(lightboxEl, 'ak-youtubemodal--enabled', enabled);
-  }, enabled ? 0 : 300);
+    classes.enable(lightboxEl, this.config.className + '--enabled', enabled);
+  }.bind(this), enabled ? 0 : 300);
   window.setTimeout(function() {
-    enableClass(lightboxEl, 'ak-youtubemodal--visible', enabled);
-  }, enabled ? 300 : 0);
+    classes.enable(lightboxEl, this.config.className + '--visible', enabled);
+  }.bind(this), enabled ? 300 : 0);
 }
 
 
+/**
+ * Plays a YouTube video.
+ * @param {string} videoId Video ID to play.
+ */
 YouTubeModal.prototype.play = function(videoId) {
-  /*
-  if (goog.userAgent.MOBILE) {
+  if (this.config.useHandlerOnMobile &&
+      (useragent.isIOS() || useragent.isAndroid())) {
     window.location.href = 'https://m.youtube.com/watch?v=' + videoId;
   } else {
+    this.setVisible(true);
   }
-  */
-  this.setVisible(true);
 
   if (player) {
     return;
   }
-  var playerEl = document.querySelector('.ak-youtubemodal-player');
+  var playerEl = document.querySelector('.' + this.config.className + '-player');
   var options = {
     'videoId': videoId,
-    'playerVars': {
-      'autohide': 1,
-      'autoplay': 1,
-      'fs': 1,
-      'modestbranding': 1,
-      'rel': 0,
-      'showinfo': 0,
-      'iv_load_policy': 3
-    }
+    'playerVars': objects.clone(this.config.playerVars)
   };
   player = new YT.Player(playerEl, options);
 }
 
 
 /**
- * Initializes the scroll listener for all elements tagged with the
- * "ak-scrolltoggle" class (configurable using the "className" config).
+ * Initializes a YouTube modal dialog singleton.
  * @param {Object=} opt_config Config options.
  */
 function init(opt_config) {
-  new YouTubeModal();
-}
-
-
-function createDom(tagName, opt_className) {
-  var element = document.createElement(tagName);
-  if (opt_className) {
-    element.className = opt_className;
+  if (initted) {
+    return;
   }
-  return element;
-}
-
-
-function listen(callback) {
-  document.addEventListener('click', function(e) {
-    e = e || window.event;
-    var target = e.target || e.srcElement;
-    target = target.nodeType == 3 ? target.parentNode : target;
-    do {
-      callback(target);
-      if (target.parentNode) {
-        target = target.parentNode;
-      }
-    } while (target.parentNode);
-  });
-}
-
-
-function enableClass(el, className, enabled) {
-  if (enabled) {
-    el.classList.add(className);
-  } else {
-    el.classList.remove(className);
+  var config = objects.clone(defaultConfig);
+  if (opt_config) {
+    objects.merge(config, opt_config);
   }
+
+  console.log(config);
+  new YouTubeModal(config);
+  initted = true;
 }
 
 
