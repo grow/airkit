@@ -60,7 +60,7 @@ YouTubeModal.prototype.setVisible = function(enabled) {
   }, enabled ? 0 : 300);
   window.setTimeout(function() {
     enableClass(lightboxEl, 'ak-youtubemodal--visible', enabled);
-  }, enabled ? 10 : 0);
+  }, enabled ? 300 : 0);
 }
 
 
