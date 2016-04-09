@@ -28,7 +28,7 @@ var defaultConfig = {
 
 
 /**
- * Plays a YouTube video in a modal dialog
+ * Plays a YouTube video in a modal dialog.
  * @constructor
  */
 function YouTubeModal(config) {
