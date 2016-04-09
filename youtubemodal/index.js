@@ -13,6 +13,7 @@ var initted = false;
 var player = null;
 var defaultConfig = {
   useHandlerOnMobile: true,
+  transitionDuration: 300,
   className: 'ak-youtubemodal',
   playerVars: {
     'autohide': 1,
@@ -98,10 +99,10 @@ YouTubeModal.prototype.setVisible = function(enabled) {
   var lightboxEl = document.querySelector('.' + this.config.className);
   window.setTimeout(function() {
     classes.enable(lightboxEl, this.config.className + '--enabled', enabled);
-  }.bind(this), enabled ? 0 : 300);
+  }.bind(this), enabled ? 0 : this.config.transitionDuration);
   window.setTimeout(function() {
     classes.enable(lightboxEl, this.config.className + '--visible', enabled);
-  }.bind(this), enabled ? 300 : 0);
+  }.bind(this), enabled ? this.config.transitionDuration : 0);
 }
 
 
@@ -142,7 +143,6 @@ function init(opt_config) {
     objects.merge(config, opt_config);
   }
 
-  console.log(config);
   new YouTubeModal(config);
   initted = true;
 }
