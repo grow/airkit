@@ -4,8 +4,10 @@
  */
 
 var classes = require('../utils/classes');
+var objects = require('../utils/objects');
 var scrolldelegator = require('../scrolldelegator');
 var ui = require('../ui');
+var video = require('../utils/video');
 
 
 /**
@@ -73,9 +75,82 @@ function addClassInView(config) {
   var classAdder = new InViewClassAdder(selector, className, offset, delay);
   classAdder.onScroll();
   scrolldelegator.addDelegate(classAdder);
+  scrolldelegator.start();
+}
+
+
+/**
+ * Plays videos when they enter the viewport.
+ * @param {string} selector Query selector to find elements to act upon.
+ * @param {number=} opt_offset Offset (by percentage of the element) to
+ *     apply when checking if the element is in view.
+ * @param {Array.<number>=} opt_delay An array of [min delay, max delay].
+ */
+var InViewPlayer = function(selector, opt_offset, opt_delay) {
+  this.selector = selector;
+  this.offset = opt_offset || null;
+  this.delay = opt_delay || 0;
+
+  // Ensure all videos are loaded.
+  var els = document.querySelectorAll(this.selector);
+  [].forEach.call(els, function(el) {
+    el.load();
+  });
+};
+
+
+/** Conditionally plays a video. */
+InViewPlayer.prototype.playIfNotPlaying = function(el) {
+  if ((el.currentTime || el.paused) && !el.ended) {
+    el.play();
+  }
+};
+
+
+/** Finds videos and plays them if they're in view. */
+InViewPlayer.prototype.onScroll = function() {
+  var els = document.querySelectorAll(this.selector);
+  [].forEach.call(els, function(el) {
+    if (ui.isElementInView(el, this.offset)) {
+      if (this.delay) {
+        var min = this.delay[0];
+        var max = this.delay[1];
+        var timeout = Math.floor(Math.random() * (max - min)) + min;
+        window.setTimeout(function() {
+          this.playIfNotPlaying(el);
+        }.bind(this), timeout);
+      } else {
+        this.playIfNotPlaying(el);
+      }
+    }
+  }.bind(this));
+};
+
+
+InViewPlayer.DefaultConfig = {
+  selector: 'video.ak-in-view-video',
+  offset: null,
+  delay: 0,
+};
+
+
+function playVideoInView(opt_config) {
+  if (!video.canPlayVideo()) {
+    return;
+  }
+  var config = objects.clone(InViewPlayer.DefaultConfig);
+  if (opt_config) {
+    objects.merge(config, opt_config);
+  }
+  var player = new InViewPlayer(
+      config.selector, config.offset, config.delay);
+  player.onScroll();
+  scrolldelegator.addDelegate(player);
+  scrolldelegator.start();
 }
 
 
 module.exports = {
-  addClassInView: addClassInView
+  addClassInView: addClassInView,
+  playVideoInView: playVideoInView
 };

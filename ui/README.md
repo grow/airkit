@@ -26,7 +26,7 @@ ui.createStyle({
 ### inview.addClassInView
 
 Adds a class to elements when they come into the viewport, optionally applying
-and offset and a randomized delay.
+an offset and a randomized delay.
 
 #### Sample usage
 
@@ -52,5 +52,29 @@ JS
     offset: 0.85,
     delay: [200, 500]
   });
+</script>
+```
+
+### inview.playVideoInView
+
+Loads videos and plays them when they come into the viewport, optionally
+applying an offset and a randomized delay.
+
+#### Sample usage
+
+HTML
+
+```html
+<video class="ak-in-view" preload="auto">
+  <source src="video.mp4" type="video/mp4">
+</div>
+```
+
+JS
+
+```javascript
+<script>
+  var inview = require('airkit/ui/inview');
+  inview.playVideoInView();
 </script>
 ```
