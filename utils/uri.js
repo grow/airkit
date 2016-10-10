@@ -17,7 +17,7 @@ function getParameterValue(key, opt_uri) {
 }
 
 
-var RewriteParamsDefaultConfig = {
+var UpdateParamsFromUrlDefaultConfig = {
   selector: 'a.ak-rewrite-params[href]',
   attr: 'href',
   params: null,  // required
@@ -32,8 +32,8 @@ var RewriteParamsDefaultConfig = {
  *     params: A list of URL params (string or RegExp) to set on the element
  *         attr from the current URL.
  */
-function rewriteParams(config) {
-  var c = objects.clone(RewriteParamsDefaultConfig);
+function updateParamsFromUrl(config) {
+  var c = objects.clone(UpdateParamsFromUrlDefaultConfig);
   objects.merge(c, config);
   var selector = c.selector;
   var attr = c.attr;
@@ -82,5 +82,5 @@ function rewriteParams(config) {
 
 module.exports = {
   getParameterValue: getParameterValue,
-  rewriteParams: rewriteParams
+  updateParamsFromUrl: updateParamsFromUrl
 };
