@@ -18,7 +18,7 @@ function getParameterValue(key, opt_uri) {
 
 
 var UpdateParamsFromUrlDefaultConfig = {
-  selector: 'a.ak-rewrite-params[href]',
+  selector: 'a.ak-update-params[href]',
   attr: 'href',
   params: null,  // required
 };
