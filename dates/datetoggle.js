@@ -3,8 +3,8 @@
  */
 
 var objects = require('../utils/objects');
-var uri = require('../utils/uri');
 var ui = require('../ui');
+var uri = require('../utils/uri');
 
 var defaultConfig = {
   attributeName: 'data-ak-datetoggle',
@@ -49,6 +49,11 @@ DateToggle.prototype.processElement_ = function(el, now) {
 };
 
 
+/**
+ * Creates the styles used for toggling dates. Permits usage of datetoggle
+ * without needing to manually add styles to the page. You can optionally
+ * call this at the top of the page to avoid FOUC.
+ */
 function initStyle(opt_config) {
   var config = objects.clone(defaultConfig);
   if (opt_config) {
