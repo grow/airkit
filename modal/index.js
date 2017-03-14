@@ -241,5 +241,6 @@ function close() {
 module.exports = {
   init: init,
   openById: openById,
-  close: close
+  close: close,
+  Modal: Modal
 };
