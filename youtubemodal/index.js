@@ -259,7 +259,10 @@ function dispose() {
   }
   singleton.dispose();
   singleton = null;
-  player = null;
+  if (player) {
+    player.destroy();
+    player = null;
+  }
 }
 
 /**
