@@ -39,6 +39,8 @@ var defaultConfig = {
 function YouTubeModal(config) {
   this.config = config;
   this.parentElement = document.querySelector(this.config.parentSelector);
+  this.closeEventListener_ = this.setActive_.bind(this, false);
+  this.popstateListener_ = this.onHistoryChange_.bind(this);
   this.initDom_();
   this.lastActiveVideoId_ = null;
   this.scrollY = 0;
@@ -76,15 +78,22 @@ YouTubeModal.prototype.initDom_ = function() {
   el.appendChild(createDom('div', this.config.className + '-player'));
   el.appendChild(createDom('div', this.config.className + '-mask'));
   this.parentElement.appendChild(el);
-  closeEl.addEventListener('click', function() {
-    this.setActive_(false);
-  }.bind(this));
+  closeEl.addEventListener('click', this.closeEventListener_);
 
   if (this.config.history) {
-    window.addEventListener('popstate', this.onHistoryChange_.bind(this));
+    window.addEventListener('popstate', this.popstateListener_);
   }
 };
 
+YouTubeModal.prototype.dispose = function() {
+  var el = document.querySelector('.' + this.config.className);
+  var closeEl = document.querySelector('.' + this.config.className + '-x');
+  closeEl.removeEventListener('click', this.closeEventListener_);
+  this.parentElement.removeChild(el);
+  if (this.config.history) {
+    window.removeEventListener('popstate', this.popstateListener_);
+  }
+};
 
 /**
  * Sets the modal's visibility.
@@ -244,6 +253,14 @@ function init(opt_config) {
   singleton = new YouTubeModal(config);
 }
 
+function dispose() {
+  if (!singleton) {
+    return;
+  }
+  singleton.dispose();
+  singleton = null;
+  player = null;
+}
 
 /**
  * Plays a YouTube video in a modal, without requiring a click on an element.
@@ -258,6 +275,7 @@ function play(videoId) {
 
 
 module.exports = {
+  dispose: dispose,
   init: init,
   play: play
 };
