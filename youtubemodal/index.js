@@ -43,6 +43,7 @@ function YouTubeModal(config) {
   this.popstateListener_ = this.onHistoryChange_.bind(this);
   this.el_ = null;
   this.closeEl_ = null;
+  this.attributionEl_ = null;
   this.initDom_();
   this.lastActiveVideoId_ = null;
   this.scrollY = 0;
@@ -82,7 +83,9 @@ YouTubeModal.prototype.initDom_ = function() {
   this.closeEl_.setAttribute('aria-label', 'Close video player');
   this.closeEl_.setAttribute('role', 'button');
   this.closeEl_.setAttribute('tabindex', '0');
+  this.attributionEl_ = createDom('div', this.config.className + '-attribution');
   this.el_.appendChild(this.closeEl_);
+  this.el_.appendChild(this.attributionEl_);
   this.el_.appendChild(createDom('div', this.config.className + '-player'));
   this.el_.appendChild(createDom('div', this.config.className + '-mask'));
   this.parentElement.appendChild(this.el_);
@@ -206,8 +209,9 @@ YouTubeModal.prototype.onHistoryChange_ = function(e) {
  * @param {string} videoId Video ID to play.
  * @param {boolean=} opt_updateState Whether to update the history state.
  * @param {number=} opt_startTime A specific time in the video to start at.
+ * @param {string} opt_attribution Attribution text to overlay on top of the video.
  */
-YouTubeModal.prototype.play = function(videoId, opt_updateState, opt_startTime) {
+YouTubeModal.prototype.play = function(videoId, opt_updateState, opt_startTime, opt_attribution) {
   var useHandler = (
     this.config.useHandlerOnMobile
     && (useragent.isIOS() || useragent.isAndroid()));
@@ -219,6 +223,12 @@ YouTubeModal.prototype.play = function(videoId, opt_updateState, opt_startTime) 
     }
     window.location.href = url;
     return;
+  }
+
+  if (opt_attribution) {
+    this.attributionEl_.textContent = opt_attribution;
+  } else {
+    this.attributionEl_.textContent = '';
   }
 
   this.setActive_(true, videoId, opt_updateState);
