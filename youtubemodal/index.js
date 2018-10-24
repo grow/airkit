@@ -53,8 +53,10 @@ function YouTubeModal(config) {
     var videoId = targetEl.getAttribute(data);
     var startDataAttribute = 'data-' + this.config.className + '-video-start-seconds';
     var startTime = +targetEl.getAttribute(startDataAttribute);
+    var attributionAttribute = 'data-' + this.config.className + '-attribution';
+    var attribution = targetEl.getAttribute(attributionAttribute);
     if (videoId) {
-      this.play(videoId, true /* opt_updateState */, startTime);
+      this.play(videoId, true /* opt_updateState */, startTime, attribution);
     }
   }.bind(this);
 
