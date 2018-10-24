@@ -14,7 +14,15 @@ youtubemodal.init();
 HTML
 
 ```html
+<!-- Default. -->
 <button data-ak-youtubemodal-video-id="{{video_id}}">Play</button>
+
+<!-- With options. -->
+<button
+  data-ak-youtubemodal-video-id="{{video_id}}"
+  data-ak-youtubemodal-video-start-seconds="3"
+  data-ak-youtubemodal-attribution="Subscription required."
+  >Play</button>
 ```
 
 Sass
