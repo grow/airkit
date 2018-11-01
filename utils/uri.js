@@ -18,6 +18,8 @@ function getParameterValue(key, opt_uri) {
 
 
 var UpdateParamsFromUrlDefaultConfig = {
+  serialize: false,
+  serializeKey: 'referrer',
   selector: 'a.ak-update-params[href]',
   attr: 'href',
   params: null,  // required
@@ -74,7 +76,21 @@ function updateParamsFromUrl(config) {
       for (var key in vals) {
         map[key] = vals[key];
       }
-      url.search = encodeQueryMap(map);
+
+      // Optionally serialize the keys and values into a single key and value,
+      // and rewrite the element's attribute with the new serialized query
+      // string. This was built specifically to do things like pass `utm_*`
+      // parameters into a `referrer` query string, for Google Play links, e.g.
+      // `&referrer=utm_source%3DSOURCE`.
+      //
+      // See https://developers.google.com/analytics/devguides/collection/android/v4/campaigns#google-play-url-builder
+      if (c.serialize) {
+        var serializedMap = {};
+        serializedMap[c.serializeKey] = encodeQueryMap(map);
+        url.search = encodeQueryMap(serializedMap);
+      } else {
+        url.search = encodeQueryMap(map);
+      }
 
       el.setAttribute(attr, url.toString());
     }
