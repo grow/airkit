@@ -99,7 +99,6 @@ only be included for staging environments.
 var dynamicdata = require('airkit/dynamicdata');
 dynamicdata.get({
   file: {
-    id: 'promos',
     staging: 'https://data-backend.storage.googleapis.com/staging-123-456/promos.json'
     prod: 'https://data-backend.storage.googleapis.com/prod/promos.json'
   }
