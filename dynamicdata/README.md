@@ -95,31 +95,16 @@ only be included for staging environments.
 }
 ```
 
-```html
-<div>
-  Today it is:
-    <span
-        data-ak-dynamicdata-file="promos"
-        data-ak-dynamicdata-id="birthday">
-    </div>
-</div>
-
-<div>
-  Our favorite color is:
-    <span
-        data-ak-dynamicdata-file="promos"
-        data-ak-dynamicdata-id="color">
-    </div>
-</div>
-```
-
 ```javascript
 var dynamicdata = require('airkit/dynamicdata');
-dynamicdata.init({
-  files: {
-    promos: {
-      staging: 'https://data-backend.storage.googleapis.com/staging-123-456/promos.json'
-      prod: 'https://data-backend.storage.googleapis.com/prod/promos.json'
+dynamicdata.get({
+  file: {
+    id: 'promos',
+    staging: 'https://data-backend.storage.googleapis.com/staging-123-456/promos.json'
+    prod: 'https://data-backend.storage.googleapis.com/prod/promos.json'
   }
+}).then(function(resp) {
+  console.log('Birthday: ' + resp['birthday']['title']);
+  console.log('Color: ' + resp['color']['title']);
 });
 ```

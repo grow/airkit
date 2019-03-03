@@ -19,6 +19,18 @@ function DateToggle(config) {
 };
 
 
+DateToggle.isEnabledNow = function(start, end, now) {
+  if (start && end) {
+    return now >= start && now < end;
+  } else if (start) {
+    return now >= start;
+  } else if (end) {
+    return now < end;
+  }
+  return false;
+}
+
+
 DateToggle.prototype.initDom_ = function() {
   var els = document.querySelectorAll('[' + this.config.attributeName + ']');
   var dateFromParam = uri.getParameterValue(this.config.parameterName);
@@ -36,13 +48,7 @@ DateToggle.prototype.processElement_ = function(el, now) {
   var endString = el.getAttribute(endAttrName);
   var start = startString ? new Date(startString) : null;
   var end = endString ? new Date(endString) : null;
-  if (start && end) {
-    var enabled = now >= start && now < end;
-  } else if (start) {
-    var enabled = now >= start;
-  } else if (end) {
-    var enabled = now < end;
-  }
+  var enabled = DateToggle.isEnabledNow(start, end, now);
   if (enabled) {
     el.removeAttribute(this.config.attributeName);
   }
@@ -77,6 +83,7 @@ function init(opt_config) {
 
 
 module.exports = {
+  isEnabledNow: DateToggle.isEnabledNow,
   initStyle: initStyle,
   init: init
 };

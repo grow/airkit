@@ -1,3 +1,4 @@
+var datetoggle = require('../dates/datetoggle');
 var objects = require('../utils/objects');
 var uri = require('../utils/uri');
 
@@ -8,7 +9,7 @@ var defaultConfig = {
 };
 
 
-function _get(url, cb) {
+function _xhr(url, cb) {
   var req = new XMLHttpRequest();
   req.open('GET', url);
   req.addEventListener('load', function() {
@@ -19,55 +20,46 @@ function _get(url, cb) {
 };
 
 
-function processElements(fileKey, resp) {
-  var selector = '[data-ak-dynamicdata-file="' + fileKey + '"]';
-  var els = document.querySelectorAll(selector);
-  [].forEach.call(els, function(el) {
-    var parts = el.getAttribute('data-ak-dynamicdata-id');
-    parts = parts.split('.');
-    key = parts[0];
-    value = parts[1];
-    el.innerHTML = resp[key][value];
-  });
+function processStagingResp(resp, now) {
+  var keysToData = {};
+  for (var key in resp) {
+    [].forEach.call(resp[key], function(datedRow) {
+      var start =  new Date(datedRow['start_date']);
+      var end = new Date(datedRow['end_date']);
+      if (datetoggle.isEnabledNow(start, end, now)) {
+        keysToData[key] = datedRow;
+      }
+    });
+  }
+  return keysToData;
 }
 
 
-function processFile(fileKey, url, isProd, now) {
-  // TODO: Implement XHR to url, normalize the data (based on `now` if not
-  // `isProd`), then analyze all the elements matching fileKey,
-  // determine if the id of the element is present in the data file, and then
-  // set the innerHTML of the matching elements to the corresponding value in
-  // the data file.
-  _get(url, function(resp) {
-    processElements(fileKey, resp);
-  });
-}
-
-
-function init(userConfig) {
+function get(userConfig) {
   var config = objects.clone(defaultConfig);
   objects.merge(config, userConfig);
-  var files = config['files'];
-
   var dateFromParam = uri.getParameterValue(config.nowParameterName);
   var now = dateFromParam ? new Date(dateFromParam) : new Date();
   var isProd = true;
   var isProdFromParam = uri.getParameterValue(config.prodParameterName);
-
-  console.log(config);
-
-  for (var fileKey in files) {
-    var url = files[fileKey]['prod'];
-    if (!isProdFromParam && 'staging' in files[fileKey]) {
-      isProd = false;
-      url = files[fileKey]['staging'];
-    }
-    url = url + '?cb=' + (new Date()).getTime();
-    processFile(fileKey, url, isProd, now);
+  var file = config['file'];
+  var url = file['prod'];
+  if (!isProdFromParam && 'staging' in file) {
+    isProd = false;
+    url = file['staging'];
   }
+  url = url + '?cb=' + (new Date()).getTime();
+  return new Promise(function(resolve, reject) {
+    _xhr(url, function(resp) {
+      if (!isProd) {
+        resp = processStagingResp(resp, now);
+      }
+      resolve(resp);
+    });
+  });
 }
 
 
 module.exports = {
-  init: init
+  get: get
 };
