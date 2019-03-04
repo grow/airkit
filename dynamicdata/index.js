@@ -4,28 +4,41 @@ var uri = require('../utils/uri');
 
 
 var defaultConfig = {
+  applyCacheBuster: true,
   nowParameterName: 'ak-now',
   prodParameterName: 'ak-dynamicdata-prod'
 };
 
 
+var _cacheBuster = (new Date()).getTime();
+var _xhrCache = _xhrCache || {};
+
+
 function _xhr(url, cb) {
+  if (url in _xhrCache) {
+    return cb(_xhrCache[url]);
+  }
   var req = new XMLHttpRequest();
   req.open('GET', url);
   req.addEventListener('load', function() {
     var text = req.responseText;
-    cb(JSON.parse(text));
+    var result = JSON.parse(text);
+    _xhrCache[url] = result;
+    cb(result);
   });
   req.send();
 };
 
 
+/**
+ * Normalizes staging data to become the same format as prod data.
+ */
 function processStagingResp(resp, now) {
   var keysToData = {};
   for (var key in resp) {
     [].forEach.call(resp[key], function(datedRow) {
-      var start =  new Date(datedRow['start_date']);
-      var end = new Date(datedRow['end_date']);
+      var start =  datedRow['start_date'] ? new Date(datedRow['start_date']) : null;
+      var end = datedRow['end_date'] ? new Date(datedRow['end_date']) : null;
       if (datetoggle.isEnabledNow(start, end, now)) {
         keysToData[key] = datedRow;
       }
@@ -48,7 +61,9 @@ function get(userConfig) {
     isProd = false;
     url = file['staging'];
   }
-  url = url + '?cb=' + (new Date()).getTime();
+  if (config.applyCacheBuster) {
+    url = url + '?cb=' + _cacheBuster;
+  }
   return new Promise(function(resolve, reject) {
     _xhr(url, function(resp) {
       if (!isProd) {

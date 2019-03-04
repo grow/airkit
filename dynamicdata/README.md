@@ -2,7 +2,7 @@
 
 #### Concept
 
-Binds the content of a DOM element to a value from a JSON file on a server.
+Retrieves dynamic data from a server, and normalizes it for use on a page.
 This is intended to be used in conjunction with a background job that processes
 data from a server, and regularly writes it to a JSON file to keep the content
 in the file updated with the dynamic data source.
@@ -17,6 +17,14 @@ different dates.
 If a `staging` key is not provided for a file, it will not be available.
 `staging` keys are intended to be omitted from production HTML/JS and should
 only be included for staging environments.
+
+#### Example scenarios
+
+For example, let's say you wanted to manage a promo schedule in a Google Sheet.
+This utility could be used to schedule promos (with one promo per row in the
+sheet). In `prod`, only the currently active promo would be rendered. In
+`staging`, the user could use a query parameter (`?ak-now=2019/04/16` for
+example) to render the content and preview it at different stages.
 
 #### Sample usage
 
