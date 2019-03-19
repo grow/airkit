@@ -124,9 +124,9 @@ Tracker.prototype.getTrackingObject = function(el) {
   var obj = new TrackingObject();
   obj.attrs = this.parseAttrs_(el);
   obj.element = el;
-  obj.label = this.getLabel_(el);
+  obj.label = this.getLabel(el);
   obj.linkCategory = this.getLinkCategory_(el);
-  obj.linkCategoryName = this.getNameForLinkCategory_(obj.linkCategory);
+  obj.linkCategoryName = this.getNameForLinkCategory(obj.linkCategory);
   return obj;
 };
 
