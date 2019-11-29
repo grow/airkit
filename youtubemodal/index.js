@@ -249,7 +249,13 @@ YouTubeModal.prototype.play = function(videoId, opt_updateState, opt_startTime, 
 
   var options = {
     'videoId': videoId,
-    'playerVars': playerVars
+    'playerVars': playerVars,
+    'events': {
+      // Need to do this to force autoplay on mobile
+      'onReady': function(event) {
+        event.target.playVideo();
+      },
+    },
   };
   player = new YT.Player(playerEl, options);
   this.activeVideoId_ = videoId;
