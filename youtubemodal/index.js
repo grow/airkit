@@ -278,6 +278,14 @@ function init(opt_config) {
   singleton = new YouTubeModal(config);
 }
 
+
+function setScrollY(scrollYValue) {
+  if (!singleton) {
+    throw 'youtubemodal.init must be run first.';
+  }
+  return singleton.scrollY = scrollYValue;
+}
+
 function dispose() {
   if (!singleton) {
     return;
@@ -305,5 +313,6 @@ function play(videoId) {
 module.exports = {
   dispose: dispose,
   init: init,
-  play: play
+  play: play,
+  setScrollY: setScrollY
 };
