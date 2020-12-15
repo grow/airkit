@@ -19,7 +19,8 @@ var defaultConfig = {
   transitionDuration: 300,
   visibilityDuration: 0,
   onModalOpen: null,
-  onModalClose: null
+  onModalClose: null,
+  setScrollOnClose: true,
 };
 
 
@@ -162,7 +163,9 @@ Modal.prototype.setVisible = function(enabled) {
     } else {
       lightboxEl.classList.remove(enterClass);
       lightboxEl.classList.add(exitClass);
-      window.scrollTo(0, this.scrollY);
+      if (this.config.setScrollOnClose) {
+        window.scrollTo(0, this.scrollY);
+      }
     }
   }, 0);
 
