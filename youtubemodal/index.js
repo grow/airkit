@@ -49,7 +49,14 @@ function YouTubeModal(config) {
   this.scrollY = 0;
   this.lastFocusedEl_ = null;
 
-  this.delegatedListener_ = function(targetEl) {
+  this.delegatedListener_ = function(targetEl, e) {
+    // Handle both key presses and mouse clicks.
+    // If key press isn't "space" or "return" to trigger the modal, return.
+    if (e.keyCode) {
+      if (e.keyCode !== 32 && e.keyCode !== 13) {
+        return;
+      }
+    }
     var data = 'data-' + this.config.className + '-video-id';
     var videoId = targetEl.getAttribute(data);
     var startDataAttribute = 'data-' + this.config.className + '-video-start-seconds';
@@ -57,12 +64,14 @@ function YouTubeModal(config) {
     var attributionAttribute = 'data-' + this.config.className + '-attribution';
     var attribution = targetEl.getAttribute(attributionAttribute);
     if (videoId) {
+      e.preventDefault();  // Prevent "space" from scrolling the page.
       this.play(videoId, true /* opt_updateState */, startTime, attribution);
     }
   }.bind(this);
 
   // Loads YouTube iframe API.
   events.addDelegatedListener(document, 'click', this.delegatedListener_);
+  events.addDelegatedListener(document, 'keydown', this.delegatedListener_);
 
   // Only add the script tag if it doesn't exist
   var scriptTag =
@@ -105,6 +114,7 @@ YouTubeModal.prototype.dispose = function() {
   this.closeEl_.removeEventListener('click', this.closeEventListener_);
   this.parentElement.removeChild(this.el_);
   events.removeDelegatedListener(document, 'click', this.delegatedListener_);
+  events.removeDelegatedListener(document, 'keydown', this.delegatedListener_);
   if (this.config.history) {
     window.removeEventListener('popstate', this.popstateListener_);
   }
