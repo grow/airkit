@@ -75,10 +75,10 @@ function YouTubeModal(config) {
 
   // Only add the script tag if it doesn't exist
   var scriptTag =
-    document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
+    document.querySelector('script[src="https://www.youtube.com/iframe_api?trustedtypes=1"]');
   if (!scriptTag) {
     var tag = document.createElement('script');
-    tag.setAttribute('src', 'https://www.youtube.com/iframe_api');
+    tag.setAttribute('src', 'https://www.youtube.com/iframe_api?trustedtypes=1');
     this.parentElement.appendChild(tag);
   }
 }
