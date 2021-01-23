@@ -39,6 +39,13 @@ function Modal(config) {
   var closeClass = this.config.className + '-x';
   var data = 'data-' + this.config.className + '-id';
   var func = function(targetEl, e) {
+    // Handle both key presses and mouse clicks.
+    // If key press isn't "space" or "return" to trigger the modal, return.
+    if (e.keyCode) {
+      if (e.keyCode !== 32 && e.keyCode !== 13) {
+        return;
+      }
+    }
     var modalId = targetEl.getAttribute(data);
     if (modalId) {
       e.preventDefault();
@@ -50,6 +57,7 @@ function Modal(config) {
     }
   }.bind(this);
   events.addDelegatedListener(document, 'click', func);
+  events.addDelegatedListener(document, 'keydown', func);
 
   this.initStateFromHash_();
 }
