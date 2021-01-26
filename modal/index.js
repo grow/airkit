@@ -32,6 +32,7 @@ function Modal(config) {
   this.config = config;
   this.timers_ = [];
   this.scrollY = 0;
+  this.lastFocusedEl_ = null;
 
   this.initDom_();
 
@@ -168,11 +169,30 @@ Modal.prototype.setVisible = function(enabled) {
       lightboxEl.classList.remove(exitClass);
       lightboxEl.classList.add(enterClass);
       this.scrollY = window.pageYOffset;
+      // Set the focus to the modal element. Store the most recent focused element
+      // to restore focus back to the page when closed.
+      this.lastFocusedEl_ = document.activeElement;
+      // Focus on the newly opened modal.
+      window.setTimeout(
+          function() {
+            lightboxEl.focus();
+          },
+          this.config.transitionDuration + 10);
     } else {
       lightboxEl.classList.remove(enterClass);
       lightboxEl.classList.add(exitClass);
       if (this.config.setScrollOnClose) {
         window.scrollTo(0, this.scrollY);
+      }
+      // Restore focus to the element that was active prior to the modal being opened.
+      if (this.lastFocusedEl_) {
+        var lastFocusedEl = this.lastFocusedEl_;
+        window.setTimeout(
+            function() {
+              lastFocusedEl.focus();
+              lastFocusedEl = null;
+            },
+            this.config.transitionDuration + 10);
       }
     }
   }, 0);
