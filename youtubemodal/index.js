@@ -67,6 +67,13 @@ function YouTubeModal(config) {
       e.preventDefault();  // Prevent "space" from scrolling the page.
       this.play(videoId, true /* opt_updateState */, startTime, attribution);
     }
+
+    var closeClass = this.config.className + '-x';
+    var closeAttribute = 'data-' + this.config.className + '-x';
+    if (targetEl.classList.contains(closeClass)
+        || targetEl.hasAttribute(closeAttribute)) {
+      this.setActive_(false);
+    }
   }.bind(this);
 
   // Loads YouTube iframe API.
