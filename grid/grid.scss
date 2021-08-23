@@ -1,3 +1,5 @@
+@use "sass:math";
+
 @import "../breakpoint/mixins";
 @import "./vars";
 
@@ -9,12 +11,12 @@
   // Column widths.
   @for $i from 1 through 12 {
     &--#{$i}-cols > &__item {
-      width: 1 / $i * 100%;
+      width: math.div(1, $i) * 100%;
     }
   }
   @for $i from 1 through 12 {
     &__item--#{$i}-cols {
-      width: $i / 12 * 100%;
+      width: math.div($i, 12) * 100%;
     }
   }
   // Responsive column widths.
@@ -22,12 +24,12 @@
     @include ak-breakpoint-gt($size) {
       @for $i from 1 through 12 {
         &--#{$i}-cols--gt-#{$size} > &__item {
-          width: 1 / $i * 100%;
+          width: math.div(1, $i) * 100%;
         }
       }
       @for $i from 1 through 12 {
         &__item--#{$i}-cols--gt-#{$size} {
-          width: $i / 12 * 100%;
+          width: math.div($i, 12) * 100%;
         }
       }
     }
