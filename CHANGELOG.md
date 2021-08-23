@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.1](https://www.github.com/grow/airkit/compare/v1.0.0...v1.0.1) (2021-08-23)
+
+
+### Miscellaneous Chores
+
+* release 1.0.1 ([5b1944d](https://www.github.com/grow/airkit/commit/5b1944d09b3d346627ec459a76e01415c5f0e6ba))
+
 ## 1.0.0 (2021-08-23)
 
 
