@@ -1,7 +1,7 @@
 var chai = require('chai');
 var chaiFs = require('chai-fs');
 var path = require('path');
-var sass = require('node-sass');
+var sass = require('dart-sass');
 
 chai.use(chaiFs);
 var assert = chai.assert;

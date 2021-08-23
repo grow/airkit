@@ -14,16 +14,16 @@
   "homepage": "https://github.com/grow/airkit",
   "dependencies": {
     "browserify": "16.5.1",
-    "gulp": "4.0.2",
     "gulp-uglify": "3.0.2",
     "gulp-util": "3.0.7",
-    "node-sass": "^4.13.1",
+    "gulp": "4.0.2",
     "vinyl-buffer": "1.0.1",
     "vinyl-source-stream": "2.0.0",
     "watchify": "^3.11.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
-    "chai-fs": "^0.1.0"
+    "chai-fs": "^0.1.0",
+    "dart-sass": "^1.25.0"
   }
 }

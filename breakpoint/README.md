@@ -105,6 +105,6 @@ $ak-breakpoint-md: 600px;
 #### Unit tests
 
 ```sh
-sudo npm install -g mocha
+npm install -g mocha
 mocha test/mixins_test.js
 ```
