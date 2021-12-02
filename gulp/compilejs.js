@@ -1,7 +1,7 @@
 var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
 var gulp = require('gulp');
-var gutil = require('gulp-util');
+var logger = require('fancy-log');
 var source = require('vinyl-source-stream');
 var uglify = require('gulp-uglify');
 var watchify = require('watchify');
@@ -41,9 +41,9 @@ function watchjs(sources, outdir, outfile, opt_options) {
   }));
 
   bundler.on('update', function() {
-    gutil.log('recompiling js...');
+    logger.info('recompiling js...');
     rebundle_(bundler, outdir, outfile, opt_options);
-    gutil.log('finished recompiling js');
+    logger.info('finished recompiling js');
   });
   return rebundle_(bundler, outdir, outfile, opt_options);
 }
@@ -52,7 +52,7 @@ function watchjs(sources, outdir, outfile, opt_options) {
 function rebundle_(bundler, outdir, outfile, opt_options) {
   var options = opt_options || {};
   return bundler.bundle()
-    .on('error', gutil.log.bind(gutil, 'browserify error'))
+    .on('error', logger.info.bind(logger, 'browserify error'))
     .pipe(source(outfile))
     .pipe(buffer())
     .pipe(uglify(options.uglify))
