@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.3](https://www.github.com/grow/airkit/compare/v1.0.2...v1.0.3) (2021-12-02)
+
+
+### Bug Fixes
+
+* replace gulp-util with fancy-log ([d8f814a](https://www.github.com/grow/airkit/commit/d8f814ab6ba8e4d009f27304fabcaca770bf8566))
+
 ### [1.0.2](https://www.github.com/grow/airkit/compare/v1.0.1...v1.0.2) (2021-08-23)
 
 
